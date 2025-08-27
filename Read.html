@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小農訂單後台</title>
+  <style>
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #555;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #8DA397;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<h1>訂單後台</h1>
+
+<table id="orderTable">
+  <thead>
+    <tr>
+      <th>日期</th>
+      <th>姓名</th>
+      <th>Email</th>
+      <th>電話</th>
+      <th>咖啡豆</th>
+      <th>薑黃醋</th>
+      <th>萊姆原汁</th>
+      <th>備註</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const spreadsheetId = "1DFGuoZnMrMy04rL4nnCMxuccXvNQq2lLXSZ4movZ2xg";
+const apiKey = "AIzaSyCo9KMjGYXAaYjuEK1PLmRZylh2JDlcn5U";
+const range = "工作表1!A1:H300"; // 抓 A-H 欄位（日期～備註）
+
+const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+
+fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const tableBody = document.querySelector("#orderTable tbody");
+    const rows = data.values;
+
+    // 從第2列開始（第1列是標題）
+    for (let i = 1; i < rows.length; i++) {
+      const row = document.createElement("tr");
+
+      rows[i].forEach(cell => {
+        const td = document.createElement("td");
+        td.textContent = cell;
+        row.appendChild(td);
+      });
+
+      tableBody.appendChild(row);
+    }
+  })
+  .catch(error => console.error("Error:", error));
+</script>
+
+</body>
+</html>

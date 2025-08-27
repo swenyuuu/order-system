@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>牛尾1號院 | 訂購單</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap" rel="stylesheet">
+
+    <style>
+        
+        body {
+            font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+            background: #edf8f1;
+            margin: 0;
+            padding: 0;
+            color: #555;
+        }
+
+        /* Header 樣式 */
+        header {
+            background: #8DA397;
+            color: white;
+            padding: 24px 16px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-weight: 600;
+            letter-spacing: 3px;
+            font-size: 24px;
+            }
+
+            
+        
+        .header-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;   /* 改成直向排列 */
+            align-items: center;      /* 水平置中 */
+            text-align: center;       /* 文字置中 */
+            gap: 4px;  /* 圖與文字之間增加一點距離 */
+        }
+
+        .logo {
+            filter: brightness(0) invert(1); /*反白*/
+            height: 50px;       /* 控制牛圖高度，數字可調 */
+            width: auto;        /* 等比例縮放 */
+            margin-bottom: 8px; /* 圖與文字間距 */
+        }
+
+
+        .brand { 
+            display: flex; 
+            flex-direction: column; 
+            line-height: 1.2; 
+        }
+        .brand-title {
+            /*font-family: "Noto Serif TC", serif;*/
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+        .brand-sub {
+            font-size: 14px;
+            color: #666; /* 次要層文字用灰 */
+            margin-top: 4px;
+            letter-spacing: 1.5px;
+        }
+
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 1.5;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        h2 {
+            color: #555;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        /* 產品展示 */
+        .product {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+            background: #fff;
+            transition: background 0.2s ease;
+        }
+
+        .product:hover {
+            background: #f5f5f5;
+        }
+
+        .product img {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 15px;
+            border: 1px solid #ccc;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-info h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .product-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            margin: 0 5px;
+            background: #8DA397;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .qty-btn:hover {
+            background: #A3B5A7;
+        }
+
+        /* 顧客資料 */
+        .info {
+            margin-top: 20px;
+            margin-right: 16px;
+        }
+
+        .info p {
+            margin: 10px 0;
+            
+        }
+
+        input, textarea {
+            margin-top: 3px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            resize: none; /*  禁止拉伸 */
+        }
+
+        /* 送出按鈕 */
+        button#sendBtn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #8DA397;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button#sendBtn:hover {
+            background: #A3B5A7;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        }
+
+        .loading-box {
+        text-align: center;
+        background: #fff;
+        padding: 30px 40px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        font-size: 16px;
+        color: #444;
+        }
+
+        /* Spinner 圓圈動畫 */
+        .spinner {
+        border: 4px solid #ccc;
+        border-top: 4px solid #8DA397;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        margin: 0 auto 12px;
+        animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+        }
+
+
+
+        /* 頁面底部 */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #555;
+            background: #8DA397;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-inner">
+          <img src="images/cow.png" alt="牛尾1號院 Logo" class="logo">
+          <div class="brand">
+            <div class="brand-title">牛尾1號院</div>
+            <div class="brand-sub">產品訂購單</div>
+          </div>
+        </div>
+      </header>
+      
+
+<div class="container">
+    <h2><i data-lucide="shopping-bag" class="icon"></i>產品選購</h2>
+
+    <!-- 產品一：咖啡豆 -->
+    <div class="product">
+        <img src="images/coffee.jpg" alt="咖啡豆">
+        <div class="product-info">
+            <h3><i data-lucide="coffee" class="icon"></i> 咖啡豆 (220g)</h3>
+            <p>$350 / 包</p>
+        </div>
+        <div class="qty-control">
+            <button class="qty-btn" onclick="updateQty('coffee', -1)">-</button>
+            <span id="coffeeQty">0</span>
+            <button class="qty-btn" onclick="updateQty('coffee', 1)">+</button>
+        </div>
+    </div>
+
+    <!-- 產品二：萊姆原汁 -->
+    <div class="product">
+        <img src="images/lime.jpg" alt="萊姆原汁">
+        <div class="product-info">
+            <h3><i data-lucide="citrus" class="icon"></i> 萊姆原汁 (350ml)</h3>
+            <p>$150 / 瓶</p>
+        </div>
+        <div class="qty-control">
+            <button class="qty-btn" onclick="updateQty('lime', -1)">-</button>
+            <span id="limeQty">0</span>
+            <button class="qty-btn" onclick="updateQty('lime', 1)">+</button>
+        </div>
+    </div>
+
+    <!-- 產品三：薑黃醋 -->
+    <div class="product">
+        <img src="images/vinegar.jpg" alt="薑黃醋">
+        <div class="product-info">
+            <h3><i data-lucide="bottle-wine" class="icon"></i> 薑黃醋 (600ml)</h3>
+            <p>$450 / 瓶</p>
+        </div>
+        <div class="qty-control">
+            <button class="qty-btn" onclick="updateQty('vinegar', -1)">-</button>
+            <span id="vinegarQty">0</span>
+            <button class="qty-btn" onclick="updateQty('vinegar', 1)">+</button>
+        </div>
+    </div>
+
+    <!-- 顧客資料 -->
+    <div class="info">
+        <h2><i data-lucide="clipboard-list" class="icon"></i>訂購資料</h2>
+        <p>姓名：<input id="name" autocomplete="name" /></p>
+        <p>電子信箱：<input id="email" type="email" autocomplete="email" /></p>
+        <p>電話：<input id="phone" type="tel" autocomplete="tel" /></p>
+        <p>備註：<textarea id="note" rows="4" placeholder="想交代的備註（可留空）"></textarea></p>
+      </div>
+
+    <!-- 送出按鈕 -->
+    <button id="sendBtn" type="button" onclick="sendOrder()"><i data-lucide="printer-check" class="icon"></i> 送出訂單</button>
+</div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-box">
+        <div class="spinner"></div>
+        <p>訂單處理中，請稍候...</p>
+        </div>
+    </div>
+  
+
+<footer>
+    <i data-lucide="phone" class="icon"></i> 聯絡電話：0912-345-678 ｜ 牛尾1號院<br>
+    <i data-lucide="sprout" class="icon"></i> 感謝支持在地小農
+</footer>
+
+<script src="index.js"></script>
+<script>
+    lucide.createIcons();
+</script>
+  
+</body>
+</html>
